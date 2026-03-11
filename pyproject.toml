@@ -1,0 +1,14 @@
+[project]
+name = "visa-atlas"
+version = "0.1.0"
+description = "Streamlit app for exploring visa sponsorship data."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.43.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff==0.1.9",
+]
