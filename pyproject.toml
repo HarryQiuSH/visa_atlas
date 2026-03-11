@@ -5,6 +5,11 @@ description = "Streamlit app for exploring visa sponsorship data."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "duckdb>=1.2.0",
+    "openpyxl>=3.1.0",
+    "pandas>=2.2.0",
+    "plotly>=6.0.0",
+    "pyarrow>=19.0.0",
     "streamlit>=1.43.0",
 ]
 
