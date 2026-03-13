@@ -190,12 +190,16 @@ def _build_table_sql(source_sql: str) -> str:
     return f"SELECT {', '.join(select_parts)} FROM {source_sql}"  # noqa: S608
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def discover_data_source(
     data_dir: Path,
     source_kind: str = "local",
 ) -> DataSourceInfo:
-    """Inspect parquet files and return the normalized source configuration."""
+    """Inspect parquet files and return the normalized source configuration.
+    
+    Uses @st.cache_resource to share the data source across all user sessions,
+    preventing memory exhaustion on Streamlit Cloud's free tier (1GB limit).
+    """
     if source_kind == "cloudflare_r2":
         base_url = get_r2_base_url()
         if not base_url:
