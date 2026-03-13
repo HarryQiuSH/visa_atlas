@@ -64,3 +64,15 @@ def format_currency(value: float | None) -> str:
     if value is None or pd.isna(value):
         return "N/A"
     return f"${value:,.0f}"
+
+
+def get_config_value(key: str, default: str = "") -> str:
+    """Get config from st.secrets (Streamlit Cloud) or os.getenv (local .env)."""
+    import os
+    import streamlit as st
+    
+    # Try Streamlit secrets first (cloud deployment)
+    if hasattr(st, 'secrets') and key in st.secrets:
+        return st.secrets[key]
+    # Fallback to environment variables (local .env)
+    return os.getenv(key, default)

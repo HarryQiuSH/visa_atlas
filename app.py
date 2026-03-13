@@ -29,7 +29,7 @@ from src.queries import (
     get_time_trend,
     get_top_categories,
 )
-from src.utils import format_currency, format_number
+from src.utils import format_currency, format_number, get_config_value
 
 DATA_DIR = Path("data")
 DEFAULT_TABLE_LIMIT = 500
@@ -62,7 +62,7 @@ def render_data_loading_status(source_info) -> None:
 
 def get_r2_base_url() -> str:
     """Return the configured R2 base URL for display."""
-    return os.getenv("R2_BASE_URL", "")
+    return get_config_value("R2_BASE_URL", "")
 
 
 def render_kpis(filters: FilterState, total_records: int, source_info) -> None:

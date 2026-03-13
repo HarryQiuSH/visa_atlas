@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 import duckdb
 import streamlit as st
 
-from src.utils import make_unique_names, normalize_column_name, quote_identifier, quote_literal
+from src.utils import get_config_value, make_unique_names, normalize_column_name, quote_identifier, quote_literal
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -165,13 +165,13 @@ def build_r2_source_paths(base_url: str, parquet_files: tuple[str, ...]) -> tupl
 
 
 def get_r2_base_url() -> str:
-    """Return the configured Cloudflare R2 base URL from environment."""
-    return os.getenv("R2_BASE_URL", "").strip().rstrip("/")
+    """Return the configured Cloudflare R2 base URL from environment or secrets."""
+    return get_config_value("R2_BASE_URL", "").strip().rstrip("/")
 
 
 def get_r2_parquet_file_names(data_dir: Path) -> tuple[str, ...]:
-    """Infer R2 parquet file names from local data or environment."""
-    configured = os.getenv("R2_PARQUET_FILES", "")
+    """Infer R2 parquet file names from local data, environment, or secrets."""
+    configured = get_config_value("R2_PARQUET_FILES", "")
     configured_file_names = tuple(line.strip() for line in configured.splitlines() if line.strip())
     if configured_file_names:
         return configured_file_names
