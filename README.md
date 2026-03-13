@@ -1,5 +1,6 @@
 # visa_atlas
 Streamlit MVP for exploring U.S. Labor Condition Application data from local parquet files or a Cloudflare R2 bucket URL.
+[Applink](https://visa-atlas.streamlit.app/)
 
 ## Inspiration
 
