@@ -4,8 +4,6 @@ import os
 from contextlib import suppress
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 import duckdb
 import streamlit as st
@@ -193,35 +191,6 @@ def _build_table_sql(source_sql: str) -> str:
 
 
 @st.cache_data(show_spinner=False)
-def split_reachable_r2_paths(parquet_files: tuple[str, ...]) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    """Split remote parquet URLs into reachable and skipped sets using lightweight GET requests."""
-    reachable: list[str] = []
-    skipped: list[str] = []
-
-    for parquet_file in parquet_files:
-        request = Request(  # noqa: S310
-            parquet_file,
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-                )
-            },
-        )
-        try:
-            with urlopen(request, timeout=10) as response:  # noqa: S310
-                response.read(1)
-                if response.status < 400:
-                    reachable.append(parquet_file)
-                else:
-                    skipped.append(parquet_file)
-        except (HTTPError, URLError):
-            skipped.append(parquet_file)
-
-    return tuple(reachable), tuple(skipped)
-
-
-@st.cache_data(show_spinner=False)
 def discover_data_source(
     data_dir: Path,
     source_kind: str = "local",
@@ -239,12 +208,9 @@ def discover_data_source(
                 "can infer file names, or set `R2_PARQUET_FILES` in `.env` with one file name per line."
             )
         parquet_files = build_r2_source_paths(base_url, parquet_file_names)
-        reachable_parquet_files, skipped_parquet_files = split_reachable_r2_paths(parquet_files)
-        if not reachable_parquet_files:
-            raise DataSourceError(
-                "None of the configured Cloudflare R2 parquet files were reachable.\n\n"
-                f"First URL attempted: {parquet_files[0]}"
-            )
+        # Skip reachability check for faster startup - DuckDB will error if files are missing
+        reachable_parquet_files = parquet_files
+        skipped_parquet_files = ()
         source_label = f"Cloudflare R2 `{base_url}`"
         source_sql = _build_local_source_sql(reachable_parquet_files)
     else:
