@@ -1,0 +1,21 @@
+[project]
+name = "visa-atlas"
+version = "0.1.0"
+description = "Streamlit app for exploring visa sponsorship data."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.2.0",
+    "openpyxl>=3.1.0",
+    "pandas>=2.2.0",
+    "plotly>=6.0.0",
+    "python-dotenv>=1.0.1",
+    "pyarrow>=19.0.0",
+    "streamlit>=1.43.0",
+    "dotenv>=0.9.9",
+]
+
+[dependency-groups]
+dev = [
+    "ruff==0.1.9",
+]
